@@ -18,6 +18,7 @@ function BusinessDetail() {
     API.get(`/review/${id}`).then((res) => setReviews(res.data));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadData();
   }, [id]);

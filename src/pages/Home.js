@@ -16,6 +16,7 @@ function Home() {
       .catch(err => console.log(err));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -29,7 +30,6 @@ function Home() {
     );
   }, [category]);
 
-  // Filter businesses by search text (matches name or category)
   const filteredBusinesses = businesses.filter((b) => {
     const text = search.toLowerCase();
     return (
@@ -40,7 +40,6 @@ function Home() {
 
   return (
     <div>
-      {/* Search + Filter Bar */}
       <div style={{ padding: '15px', background: '#f1faee' }}>
         <input
           type="text"
@@ -79,7 +78,6 @@ function Home() {
         </div>
       </div>
 
-      {/* Map */}
       <MapContainer center={center} zoom={13} style={{ height: '350px', width: '100%' }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {filteredBusinesses.map((b) => (
@@ -93,7 +91,6 @@ function Home() {
         ))}
       </MapContainer>
 
-      {/* Shop List (Cards) */}
       <div style={{ padding: '20px' }}>
         <h2 style={{ marginBottom: '15px' }}>
           {filteredBusinesses.length} {filteredBusinesses.length === 1 ? 'Result' : 'Results'} Near You
@@ -119,7 +116,6 @@ function Home() {
                 borderRadius: '12px',
                 overflow: 'hidden',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-                transition: 'transform 0.15s',
                 cursor: 'pointer'
               }}>
                 <div style={{

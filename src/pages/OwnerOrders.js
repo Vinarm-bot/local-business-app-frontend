@@ -10,6 +10,7 @@ function OwnerOrders() {
     API.get(`/order/business/${businessId}`).then((res) => setOrders(res.data));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadOrders();
   }, [businessId]);

@@ -6,6 +6,7 @@ function MyOrders() {
   const [orders, setOrders] = useState([]);
   const user = JSON.parse(localStorage.getItem('user'));
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (user) {
       API.get(`/order/user/${user.id}`).then((res) => setOrders(res.data));

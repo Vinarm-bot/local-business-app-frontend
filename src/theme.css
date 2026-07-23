@@ -1,0 +1,29 @@
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.35;
+  }
+  90% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(-110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 0px rgba(255, 75, 62, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 75, 62, 0.7);
+  }
+}
+
+.glow-btn {
+  animation: glowPulse 2.5s ease-in-out infinite;
+}

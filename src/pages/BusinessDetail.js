@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import API from '../api';
+import TiltCard from '../components/TiltCard';
+import ScrollReveal from '../components/ScrollReveal';
 
 function BusinessDetail() {
   const { id } = useParams();
@@ -60,104 +62,169 @@ function BusinessDetail() {
     loadData();
   };
 
-  if (!business) return <p>Loading...</p>;
+  if (!business) return <p style={{ textAlign: 'center', marginTop: '60px' }}>Loading...</p>;
 
   return (
-    <div style={{ maxWidth: '900px', margin: '20px auto', padding: '0 15px' }}>
-      <Link to="/">Back to Map</Link>
-
-      <div style={{ marginTop: '15px', marginBottom: '25px' }}>
-        <h1 style={{ marginBottom: '5px' }}>{business.name}</h1>
-        <p style={{ color: '#666', margin: '2px 0' }}>{business.category} &middot; {business.address}</p>
-        <p style={{ margin: '2px 0' }}><b>Rating:</b> {business.avgRating || 'No ratings yet'} / 5</p>
-        <p style={{ margin: '2px 0' }}>{business.description}</p>
-        <p style={{ margin: '2px 0' }}><b>Contact:</b> {business.contact}</p>
+    <div>
+      {/* Header banner */}
+      <div style={{
+        background: 'linear-gradient(135deg, var(--secondary), #2b4c7e)',
+        color: 'white',
+        padding: '40px 20px'
+      }}>
+        <div className="container">
+          <Link to="/" style={{ color: '#cfd8e6', fontSize: '14px' }}>&larr; Back to Home</Link>
+          <h1 className="fade-in-up" style={{ fontSize: '30px', margin: '10px 0 6px' }}>{business.name}</h1>
+          <p className="fade-in-up stagger-1" style={{ color: '#cfd8e6', margin: '2px 0', textTransform: 'capitalize' }}>
+            {business.category} &middot; {business.address}
+          </p>
+          <p className="fade-in-up stagger-2" style={{ margin: '10px 0 0' }}>
+            <span style={{
+              background: 'rgba(255,255,255,0.15)',
+              padding: '4px 12px',
+              borderRadius: '6px',
+              fontWeight: 600,
+              fontSize: '14px'
+            }}>
+              ⭐ {business.avgRating || 'New'} / 5
+            </span>
+          </p>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>Menu</h2>
-        {user && user.id === business.ownerId && (
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <Link to={`/add-item/${business._id}`}>
-              <button style={{ padding: '8px 15px', background: '#457b9d', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                + Add Item
-              </button>
-            </Link>
-            <Link to={`/orders/${business._id}`}>
-              <button style={{ padding: '8px 15px', background: '#e76f51', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                View Orders
+      <div className="container" style={{ paddingTop: '30px', paddingBottom: '60px' }}>
+        <ScrollReveal>
+          <div style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-light)',
+            borderRadius: 'var(--radius-md)',
+            padding: '18px 20px',
+            marginBottom: '30px',
+            boxShadow: 'var(--shadow-card)'
+          }}>
+            <p style={{ margin: '0 0 6px' }}>{business.description}</p>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}><b>Contact:</b> {business.contact}</p>
+          </div>
+        </ScrollReveal>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+          <h2 style={{ fontSize: '22px' }}>Menu</h2>
+          {user && user.id === business.ownerId && (
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <Link to={`/add-item/${business._id}`}>
+                <button className="btn-press" style={{ padding: '8px 16px', background: 'var(--secondary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
+                  + Add Item
+                </button>
+              </Link>
+              <Link to={`/orders/${business._id}`}>
+                <button className="btn-press" style={{ padding: '8px 16px', background: 'var(--accent)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
+                  View Orders
+                </button>
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {items.length === 0 && <p style={{ color: 'var(--text-muted)' }}>No items added yet.</p>}
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '18px', marginBottom: cart.length > 0 ? '90px' : '30px' }}>
+          {items.map((item, index) => {
+            const inCart = cart.find((c) => c._id === item._id);
+            return (
+              <TiltCard key={item._id} className={`fade-in-up stagger-${(index % 6) + 1}`} style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-light)',
+                borderRadius: 'var(--radius-md)',
+                overflow: 'hidden',
+                boxShadow: 'var(--shadow-card)'
+              }}>
+                <img src={item.photo} alt={item.name} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+                <div style={{ padding: '14px' }}>
+                  <h3 style={{ fontSize: '16px', marginBottom: '4px' }}>{item.name}</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '13px', margin: '0 0 8px' }}>{item.description}</p>
+                  <p style={{ fontWeight: 700, margin: '0 0 12px', fontSize: '15px' }}>Rs. {item.price}</p>
+                  {!inCart ? (
+                    <button onClick={() => addToCart(item)} className="btn-press" style={{
+                      width: '100%', padding: '9px', background: 'var(--primary)', color: 'white',
+                      border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer'
+                    }}>
+                      Add to Cart
+                    </button>
+                  ) : (
+                    <div style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      background: '#fff2f1', borderRadius: '8px', padding: '4px'
+                    }}>
+                      <button onClick={() => removeFromCart(item._id)} className="btn-press" style={{ padding: '6px 14px', border: 'none', background: 'transparent', fontWeight: 700, cursor: 'pointer', color: 'var(--primary-dark)' }}>-</button>
+                      <span style={{ fontWeight: 600 }}>{inCart.qty}</span>
+                      <button onClick={() => addToCart(item)} className="btn-press" style={{ padding: '6px 14px', border: 'none', background: 'transparent', fontWeight: 700, cursor: 'pointer', color: 'var(--primary-dark)' }}>+</button>
+                    </div>
+                  )}
+                </div>
+              </TiltCard>
+            );
+          })}
+        </div>
+
+        {/* Reviews */}
+        <ScrollReveal>
+          <h2 style={{ fontSize: '22px', marginBottom: '15px' }}>Reviews</h2>
+          <form onSubmit={submitReview} style={{
+            background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)',
+            padding: '18px', marginBottom: '20px', boxShadow: 'var(--shadow-card)'
+          }}>
+            <select
+              value={reviewForm.rating}
+              onChange={(e) => setReviewForm({ ...reviewForm, rating: e.target.value })}
+              style={{ display: 'block', marginBottom: '10px', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-light)' }}
+            >
+              {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n} Stars</option>)}
+            </select>
+            <textarea
+              placeholder="Write your review..."
+              value={reviewForm.text}
+              onChange={(e) => setReviewForm({ ...reviewForm, text: e.target.value })}
+              style={{ display: 'block', width: '100%', marginBottom: '10px', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-light)', fontFamily: 'var(--font-body)' }}
+            />
+            <button type="submit" className="btn-press" style={{ padding: '10px 20px', background: 'var(--secondary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
+              Submit Review
+            </button>
+          </form>
+        </ScrollReveal>
+
+        {reviews.length === 0 && <p style={{ color: 'var(--text-muted)' }}>No reviews yet. Be the first!</p>}
+        {reviews.map((r) => (
+          <div key={r._id} style={{
+            border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)',
+            margin: '0 0 12px', padding: '14px', background: 'var(--bg-card)'
+          }}>
+            <b>{r.userName}</b> &mdash; ⭐ {r.rating}
+            <p style={{ margin: '6px 0 0', color: 'var(--text-muted)' }}>{r.text}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Sticky Cart Bar */}
+      {cart.length > 0 && (
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0,
+          background: 'var(--secondary)', color: 'white',
+          padding: '16px 20px', boxShadow: '0 -4px 15px rgba(0,0,0,0.15)',
+          zIndex: 999
+        }}>
+          <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontWeight: 600 }}>{cart.length} items &middot; Rs. {cartTotal}</span>
+            <Link to={`/checkout/${id}`} state={{ cart, businessName: business.name }}>
+              <button className="btn-press glow-btn" style={{
+                padding: '10px 24px', background: 'var(--primary)', color: 'white',
+                border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', fontSize: '15px'
+              }}>
+                Proceed to Checkout &rarr;
               </button>
             </Link>
           </div>
-        )}
-      </div>
-
-      {items.length === 0 && <p>No items added yet.</p>}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '15px' }}>
-        {items.map((item) => {
-          const inCart = cart.find((c) => c._id === item._id);
-          return (
-            <div key={item._id} style={{ border: '1px solid #ddd', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-              <img src={item.photo} alt={item.name} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
-              <div style={{ padding: '12px' }}>
-                <h3 style={{ margin: '0 0 5px 0' }}>{item.name}</h3>
-                <p style={{ color: '#666', fontSize: '14px', margin: '0 0 8px 0' }}>{item.description}</p>
-                <p style={{ fontWeight: 'bold', margin: '0 0 10px 0' }}>Rs. {item.price}</p>
-                {!inCart ? (
-                  <button onClick={() => addToCart(item)} style={{ width: '100%', padding: '8px', background: '#e63946', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                    Add to Cart
-                  </button>
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <button onClick={() => removeFromCart(item._id)} style={{ padding: '5px 12px', cursor: 'pointer' }}>-</button>
-                    <span>{inCart.qty}</span>
-                    <button onClick={() => addToCart(item)} style={{ padding: '5px 12px', cursor: 'pointer' }}>+</button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {cart.length > 0 && (
-        <div style={{ position: 'sticky', bottom: '0', background: 'white', border: '1px solid #ddd', borderRadius: '10px', padding: '15px', marginTop: '20px', boxShadow: '0 -2px 8px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ margin: '0 0 10px 0' }}>Your Cart ({cart.length} items) — Rs. {cartTotal}</h3>
-          <Link to={`/checkout/${id}`} state={{ cart, businessName: business.name }}>
-            <button style={{ width: '100%', padding: '12px', background: '#2a9d8f', color: 'white', border: 'none', borderRadius: '5px', fontSize: '16px', cursor: 'pointer' }}>
-              Proceed to Checkout
-            </button>
-          </Link>
         </div>
       )}
-
-      <h2 style={{ marginTop: '30px' }}>Reviews</h2>
-      <form onSubmit={submitReview} style={{ marginBottom: '20px' }}>
-        <select
-          value={reviewForm.rating}
-          onChange={(e) => setReviewForm({ ...reviewForm, rating: e.target.value })}
-          style={{ display: 'block', marginBottom: '10px', padding: '5px' }}
-        >
-          {[1, 2, 3, 4, 5].map((n) => (
-            <option key={n} value={n}>{n} Stars</option>
-          ))}
-        </select>
-        <textarea
-          placeholder="Write your review..."
-          value={reviewForm.text}
-          onChange={(e) => setReviewForm({ ...reviewForm, text: e.target.value })}
-          style={{ display: 'block', width: '100%', marginBottom: '10px', padding: '8px' }}
-        />
-        <button type="submit" style={{ padding: '10px 20px' }}>Submit Review</button>
-      </form>
-
-      {reviews.length === 0 && <p>No reviews yet. Be the first!</p>}
-      {reviews.map((r) => (
-        <div key={r._id} style={{ border: '1px solid #ccc', margin: '10px 0', padding: '10px', borderRadius: '5px' }}>
-          <b>{r.userName}</b> &mdash; {r.rating} Stars
-          <p>{r.text}</p>
-        </div>
-      ))}
     </div>
   );
 }

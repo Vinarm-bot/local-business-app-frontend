@@ -16,33 +16,47 @@ function Navbar() {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      padding: '15px 25px',
-      background: '#1d3557',
-      color: 'white'
+      padding: '14px 30px',
+      background: '#fff',
+      borderBottom: '1px solid var(--border-light)',
+      position: 'sticky',
+      top: 0,
+      zIndex: 1000
     }}>
-      <Link to="/" style={{ color: 'white', textDecoration: 'none', fontSize: '20px', fontWeight: 'bold' }}>
-        LocalBiz
+      <Link to="/" style={{
+        fontFamily: 'var(--font-heading)',
+        fontSize: '22px',
+        fontWeight: 700,
+        color: 'var(--primary-dark)'
+      }}>
+        Cravio
       </Link>
 
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-        <Link to="/add-business" style={{ color: 'white', textDecoration: 'none' }}>
+      <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+        <Link to="/add-business" style={{
+          color: 'var(--text-dark)',
+          fontWeight: 500,
+          fontSize: '15px'
+        }}>
           Add Business
         </Link>
 
         {user ? (
           <>
-            <Link to="/my-orders" style={{ color: 'white', textDecoration: 'none' }}>
+            <Link to="/my-orders" style={{ color: 'var(--text-dark)', fontWeight: 500, fontSize: '15px' }}>
               My Orders
             </Link>
-            <span style={{ fontSize: '14px' }}>Hi, {user.name}</span>
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Hi, {user.name.split(' ')[0]}</span>
             <button
               onClick={handleLogout}
               style={{
-                padding: '6px 14px',
-                background: '#e63946',
+                padding: '8px 18px',
+                background: 'var(--primary)',
                 color: 'white',
                 border: 'none',
-                borderRadius: '5px',
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '14px',
                 cursor: 'pointer'
               }}
             >
@@ -51,8 +65,21 @@ function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/login" style={{ color: 'white', textDecoration: 'none' }}>Login</Link>
-            <Link to="/signup" style={{ color: 'white', textDecoration: 'none' }}>Signup</Link>
+            <Link to="/login" style={{ color: 'var(--text-dark)', fontWeight: 500, fontSize: '15px' }}>Login</Link>
+            <Link to="/signup">
+              <button style={{
+                padding: '8px 18px',
+                background: 'var(--primary)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '14px',
+                cursor: 'pointer'
+              }}>
+                Sign Up
+              </button>
+            </Link>
           </>
         )}
       </div>

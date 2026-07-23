@@ -1,8 +1,17 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import API from '../api';
-import 'leaflet/dist/leaflet.css';
+import HeroSlideshow from '../components/HeroSlideshow';
+import FloatingParticles from '../components/FloatingParticles';
+import TiltCard from '../components/TiltCard';
+import ScrollReveal from '../components/ScrollReveal';
+
+const categoryIcons = {
+  restaurant: '🍽️',
+  grocery: '🛒',
+  salon: '💇',
+  gym: '🏋️'
+};
 
 function Home() {
   const [businesses, setBusinesses] = useState([]);
@@ -24,7 +33,7 @@ function Home() {
         setCenter([latitude, longitude]);
         fetchBusinesses(latitude, longitude);
       },
-      (err) => {
+      () => {
         fetchBusinesses(center[0], center[1]);
       }
     );
@@ -32,119 +41,144 @@ function Home() {
 
   const filteredBusinesses = businesses.filter((b) => {
     const text = search.toLowerCase();
-    return (
-      b.name.toLowerCase().includes(text) ||
-      b.category.toLowerCase().includes(text)
-    );
+    return b.name.toLowerCase().includes(text) || b.category.toLowerCase().includes(text);
   });
 
   return (
     <div>
-      <div style={{ padding: '15px', background: '#f1faee' }}>
-        <input
-          type="text"
-          placeholder="Search for restaurants, shops, groceries..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: '100%',
-            maxWidth: '500px',
-            padding: '10px 15px',
-            borderRadius: '8px',
-            border: '1px solid #ccc',
-            fontSize: '15px',
-            display: 'block',
-            marginBottom: '10px'
-          }}
-        />
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          {['', 'restaurant', 'grocery', 'salon', 'gym'].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
+      {/* Full-screen Hero Section */}
+      <div style={{
+        position: 'relative',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        color: 'white',
+        overflow: 'hidden'
+      }}>
+        <HeroSlideshow />
+        <FloatingParticles />
+        <div style={{ position: 'relative', zIndex: 1, padding: '0 20px' }}>
+          <h1 className="fade-in-up" style={{ fontSize: '68px', fontWeight: 800, marginBottom: '10px', letterSpacing: '-1px' }}>
+            Cravio
+          </h1>
+          <p className="fade-in-up stagger-1" style={{ fontSize: '24px', fontWeight: 700, color: '#fff', marginBottom: '30px', letterSpacing: '0.5px' }}>
+            Crave More. Wait Less.
+          </p>
+          <div style={{ maxWidth: '560px', margin: '0 auto' }}>
+            <input
+              type="text"
+              placeholder="Search for restaurants, shops, groceries..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               style={{
-                padding: '6px 16px',
-                borderRadius: '20px',
-                border: category === cat ? '2px solid #e63946' : '1px solid #ccc',
-                background: category === cat ? '#e63946' : 'white',
-                color: category === cat ? 'white' : '#333',
-                cursor: 'pointer',
-                textTransform: 'capitalize'
+                width: '100%',
+                padding: '16px 22px',
+                borderRadius: '10px',
+                border: 'none',
+                fontSize: '16px',
+                boxShadow: '0 6px 20px rgba(0,0,0,0.35)'
               }}
-            >
-              {cat === '' ? 'All' : cat}
-            </button>
-          ))}
+            />
+          </div>
+        </div>
+
+        <div style={{
+          position: 'absolute',
+          bottom: '30px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 1,
+          fontSize: '13px',
+          color: 'rgba(255,255,255,0.8)'
+        }}>
+          ↓ Scroll to explore
         </div>
       </div>
 
-      <MapContainer center={center} zoom={13} style={{ height: '350px', width: '100%' }}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        {filteredBusinesses.map((b) => (
-          <Marker key={b._id} position={[b.location.coordinates[1], b.location.coordinates[0]]}>
-            <Popup>
-              <b>{b.name}</b><br />
-              Rating: {b.avgRating || 'No ratings yet'}<br />
-              <Link to={`/business/${b._id}`}>View Details</Link>
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
+      <div className="container" style={{ paddingTop: '30px' }}>
+        {/* Category Pills */}
+        <ScrollReveal>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
+            {['', 'restaurant', 'grocery', 'salon', 'gym'].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setCategory(cat)}
+                className={`btn-press ${category === cat ? 'glow-btn' : ''}`}
+                style={{
+                  padding: '8px 18px',
+                  borderRadius: '20px',
+                  border: category === cat ? 'none' : '1px solid var(--border-light)',
+                  background: category === cat ? 'var(--primary)' : 'white',
+                  color: category === cat ? 'white' : 'var(--text-dark)',
+                  cursor: 'pointer',
+                  fontWeight: 500,
+                  textTransform: 'capitalize',
+                  fontSize: '14px'
+                }}
+              >
+                {cat === '' ? 'All' : `${categoryIcons[cat] || ''} ${cat}`}
+              </button>
+            ))}
+          </div>
+        </ScrollReveal>
 
-      <div style={{ padding: '20px' }}>
-        <h2 style={{ marginBottom: '15px' }}>
-          {filteredBusinesses.length} {filteredBusinesses.length === 1 ? 'Result' : 'Results'} Near You
-        </h2>
+        {/* Shop List */}
+        <ScrollReveal delay={0.1}>
+          <h2 style={{ marginBottom: '18px', fontSize: '22px' }}>
+            {filteredBusinesses.length} {filteredBusinesses.length === 1 ? 'Result' : 'Results'} Near You
+          </h2>
+        </ScrollReveal>
 
         {filteredBusinesses.length === 0 && (
-          <p style={{ color: '#666' }}>No businesses found. Try a different search or category.</p>
+          <p style={{ color: 'var(--text-muted)' }}>No businesses found. Try a different search or category.</p>
         )}
 
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: '18px'
+          gap: '20px',
+          paddingBottom: '40px'
         }}>
-          {filteredBusinesses.map((b) => (
-            <Link
-              key={b._id}
-              to={`/business/${b._id}`}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <div style={{
-                border: '1px solid #eee',
-                borderRadius: '12px',
+          {filteredBusinesses.map((b, index) => (
+            <Link key={b._id} to={`/business/${b._id}`} style={{ color: 'inherit' }}>
+              <TiltCard className={`fade-in-up stagger-${(index % 6) + 1}`} style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-light)',
+                borderRadius: 'var(--radius-md)',
                 overflow: 'hidden',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-                cursor: 'pointer'
+                boxShadow: 'var(--shadow-card)'
               }}>
                 <div style={{
-                  height: '120px',
-                  background: '#e9ecef',
+                  height: '130px',
+                  background: 'linear-gradient(135deg, #f1f5f9, #e2e8f0)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '40px'
+                  fontSize: '46px'
                 }}>
-                  {b.category === 'restaurant' && '🍽️'}
-                  {b.category === 'grocery' && '🛒'}
-                  {b.category === 'salon' && '💇'}
-                  {b.category === 'gym' && '🏋️'}
-                  {!['restaurant', 'grocery', 'salon', 'gym'].includes(b.category) && '🏪'}
+                  {categoryIcons[b.category] || '🏪'}
                 </div>
-                <div style={{ padding: '12px' }}>
-                  <h3 style={{ margin: '0 0 4px 0', fontSize: '17px' }}>{b.name}</h3>
-                  <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: '#666', textTransform: 'capitalize' }}>
-                    {b.category}
+                <div style={{ padding: '14px' }}>
+                  <h3 style={{ fontSize: '17px', marginBottom: '4px' }}>{b.name}</h3>
+                  <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: 'var(--text-muted)', textTransform: 'capitalize' }}>
+                    {b.category} &middot; {b.address}
                   </p>
-                  <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: '#666' }}>
-                    {b.address}
-                  </p>
-                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 'bold', color: '#2a9d8f' }}>
+                  <p style={{
+                    margin: 0,
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    color: 'var(--accent)',
+                    display: 'inline-block',
+                    background: '#e8f5f3',
+                    padding: '3px 10px',
+                    borderRadius: '6px'
+                  }}>
                     ⭐ {b.avgRating || 'New'}
                   </p>
                 </div>
-              </div>
+              </TiltCard>
             </Link>
           ))}
         </div>

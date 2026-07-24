@@ -5,6 +5,7 @@ import HeroSlideshow from '../components/HeroSlideshow';
 import FloatingParticles from '../components/FloatingParticles';
 import TiltCard from '../components/TiltCard';
 import ScrollReveal from '../components/ScrollReveal';
+import Hero3D from '../components/Hero3D';
 
 const categoryIcons = {
   restaurant: '🍽️',
@@ -59,28 +60,45 @@ function Home() {
       }}>
         <HeroSlideshow />
         <FloatingParticles />
-        <div style={{ position: 'relative', zIndex: 1, padding: '0 20px' }}>
-          <h1 className="fade-in-up" style={{ fontSize: '68px', fontWeight: 800, marginBottom: '10px', letterSpacing: '-1px' }}>
-            Cravio
-          </h1>
-          <p className="fade-in-up stagger-1" style={{ fontSize: '24px', fontWeight: 700, color: '#fff', marginBottom: '30px', letterSpacing: '0.5px' }}>
-            Crave More. Wait Less.
-          </p>
-          <div style={{ maxWidth: '560px', margin: '0 auto' }}>
-            <input
-              type="text"
-              placeholder="Search for restaurants, shops, groceries..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '16px 22px',
-                borderRadius: '10px',
-                border: 'none',
-                fontSize: '16px',
-                boxShadow: '0 6px 20px rgba(0,0,0,0.35)'
-              }}
-            />
+
+        <div style={{
+          position: 'relative',
+          zIndex: 1,
+          width: '100%',
+          maxWidth: '1100px',
+          padding: '0 30px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '20px'
+        }}>
+          <div style={{ flex: '1 1 400px', textAlign: 'left' }}>
+            <h1 className="fade-in-up" style={{ fontSize: '64px', fontWeight: 800, marginBottom: '10px', letterSpacing: '-1px' }}>
+              Cravio
+            </h1>
+            <p className="fade-in-up stagger-1" style={{ fontSize: '22px', fontWeight: 700, color: '#fff', marginBottom: '30px', letterSpacing: '0.5px' }}>
+              Crave More. Wait Less.
+            </p>
+            <div style={{ maxWidth: '480px' }}>
+              <input
+                type="text"
+                placeholder="Search for restaurants, shops, groceries..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '16px 22px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  fontSize: '16px',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.35)'
+                }}
+              />
+            </div>
+          </div>
+          <div style={{ flex: '1 1 350px', height: '400px' }}>
+            <Hero3D />
           </div>
         </div>
 

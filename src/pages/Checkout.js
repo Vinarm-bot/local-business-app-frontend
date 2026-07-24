@@ -29,6 +29,14 @@ function Checkout() {
       paymentMethod: paymentStatus,
       paymentId: paymentId || null
     });
+
+    try {
+      const sound = new Audio('/order-sound.mp3');
+      sound.play();
+    } catch (err) {
+      // ignore if sound fails to play
+    }
+
     alert('Order placed successfully!');
     navigate('/my-orders');
   };
@@ -41,11 +49,10 @@ function Checkout() {
         key: RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: order.currency,
-        name: 'LocalBiz',
+        name: 'Cravio',
         description: `Order from ${businessName}`,
         order_id: order.id,
         handler: async function (response) {
-          // response.razorpay_payment_id confirms payment succeeded
           await saveOrder('Paid Online', response.razorpay_payment_id);
         },
         prefill: {
@@ -152,7 +159,7 @@ function Checkout() {
             </label>
           </div>
 
-          <button type="submit" style={{
+          <button type="submit" className="btn-press" style={{
             width: '100%', padding: '14px', background: 'var(--accent)', color: 'white',
             border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 700, cursor: 'pointer'
           }}>

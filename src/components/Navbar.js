@@ -1,8 +1,33 @@
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import API from '../api';
 
 function Navbar() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const checkPendingOrders = async () => {
+      try {
+        const { data: myBusinesses } = await API.get(`/business/owner/${user.id}`);
+        let total = 0;
+        for (const biz of myBusinesses) {
+          const { data: orders } = await API.get(`/order/business/${biz._id}`);
+          total += orders.filter((o) => o.status === 'Pending').length;
+        }
+        setPendingCount(total);
+      } catch (err) {
+        // silently ignore
+      }
+    };
+
+    checkPendingOrders();
+    const interval = setInterval(checkPendingOrders, 15000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -33,11 +58,7 @@ function Navbar() {
       </Link>
 
       <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-        <Link to="/add-business" style={{
-          color: 'var(--text-dark)',
-          fontWeight: 500,
-          fontSize: '15px'
-        }}>
+        <Link to="/add-business" style={{ color: 'var(--text-dark)', fontWeight: 500, fontSize: '15px' }}>
           Add Business
         </Link>
 
@@ -46,9 +67,30 @@ function Navbar() {
             <Link to="/my-orders" style={{ color: 'var(--text-dark)', fontWeight: 500, fontSize: '15px' }}>
               My Orders
             </Link>
+
+            <Link to="/my-businesses" style={{ position: 'relative', color: 'var(--text-dark)', fontWeight: 500, fontSize: '15px' }}>
+              My Shops
+              {pendingCount > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-8px',
+                  right: '-14px',
+                  background: 'var(--primary)',
+                  color: 'white',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  borderRadius: '10px',
+                  padding: '1px 6px'
+                }}>
+                  {pendingCount}
+                </span>
+              )}
+            </Link>
+
             <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Hi, {user.name.split(' ')[0]}</span>
             <button
               onClick={handleLogout}
+              className="btn-press"
               style={{
                 padding: '8px 18px',
                 background: 'var(--primary)',
@@ -67,7 +109,7 @@ function Navbar() {
           <>
             <Link to="/login" style={{ color: 'var(--text-dark)', fontWeight: 500, fontSize: '15px' }}>Login</Link>
             <Link to="/signup">
-              <button style={{
+              <button className="btn-press" style={{
                 padding: '8px 18px',
                 background: 'var(--primary)',
                 color: 'white',

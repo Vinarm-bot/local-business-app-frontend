@@ -66,17 +66,16 @@ function BusinessDetail() {
 
   return (
     <div>
-      {/* Header banner */}
       <div style={{
         background: 'linear-gradient(135deg, var(--secondary), #2b4c7e)',
         color: 'white',
         padding: '40px 20px'
       }}>
         <div className="container">
-          <Link to="/" style={{ color: '#cfd8e6', fontSize: '14px' }}>&larr; Back to Home</Link>
+          <Link to="/" style={{ color: '#cfd8e6', fontSize: '14px' }}>Back to Home</Link>
           <h1 className="fade-in-up" style={{ fontSize: '30px', margin: '10px 0 6px' }}>{business.name}</h1>
           <p className="fade-in-up stagger-1" style={{ color: '#cfd8e6', margin: '2px 0', textTransform: 'capitalize' }}>
-            {business.category} &middot; {business.address}
+            {business.category} - {business.address}
           </p>
           <p className="fade-in-up stagger-2" style={{ margin: '10px 0 0' }}>
             <span style={{
@@ -86,7 +85,7 @@ function BusinessDetail() {
               fontWeight: 600,
               fontSize: '14px'
             }}>
-              ⭐ {business.avgRating || 'New'} / 5
+              Rating: {business.avgRating || 'New'} / 5
             </span>
           </p>
         </div>
@@ -113,7 +112,7 @@ function BusinessDetail() {
             <div style={{ display: 'flex', gap: '10px' }}>
               <Link to={`/add-item/${business._id}`}>
                 <button className="btn-press" style={{ padding: '8px 16px', background: 'var(--secondary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
-                  + Add Item
+                  Add Item
                 </button>
               </Link>
               <Link to={`/orders/${business._id}`}>
@@ -166,7 +165,6 @@ function BusinessDetail() {
           })}
         </div>
 
-        {/* Reviews */}
         <ScrollReveal>
           <h2 style={{ fontSize: '22px', marginBottom: '15px' }}>Reviews</h2>
           <form onSubmit={submitReview} style={{
@@ -198,13 +196,12 @@ function BusinessDetail() {
             border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)',
             margin: '0 0 12px', padding: '14px', background: 'var(--bg-card)'
           }}>
-            <b>{r.userName}</b> &mdash; ⭐ {r.rating}
+            <b>{r.userName}</b> - Rating: {r.rating}
             <p style={{ margin: '6px 0 0', color: 'var(--text-muted)' }}>{r.text}</p>
           </div>
         ))}
       </div>
 
-      {/* Sticky Cart Bar */}
       {cart.length > 0 && (
         <div style={{
           position: 'fixed', bottom: 0, left: 0, right: 0,
@@ -213,13 +210,13 @@ function BusinessDetail() {
           zIndex: 999
         }}>
           <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 600 }}>{cart.length} items &middot; Rs. {cartTotal}</span>
+            <span style={{ fontWeight: 600 }}>{cart.length} items - Rs. {cartTotal}</span>
             <Link to={`/checkout/${id}`} state={{ cart, businessName: business.name }}>
               <button className="btn-press glow-btn" style={{
                 padding: '10px 24px', background: 'var(--primary)', color: 'white',
                 border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', fontSize: '15px'
               }}>
-                Proceed to Checkout &rarr;
+                Proceed to Checkout
               </button>
             </Link>
           </div>
